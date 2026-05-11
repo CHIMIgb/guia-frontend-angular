@@ -3,6 +3,8 @@ import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
+import { authInterceptor }  from './core/interceptors/auth.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -10,9 +12,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
       withInterceptors([
-        // Los interceptores se registrarán en PI-04:
-        // authInterceptor,   → adjunta el Bearer token
-        // errorInterceptor,  → maneja errores 401/403
+        authInterceptor,   // 1° adjunta el token
+        errorInterceptor,  // 2° maneja errores de respuesta
       ])
     ),
   ],
