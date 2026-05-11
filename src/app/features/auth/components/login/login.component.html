@@ -1,0 +1,72 @@
+<!-- src/app/features/auth/components/login/login.component.html -->
+<div class="login-container">
+  <div class="login-card">
+    <h2>Iniciar Sesión</h2>
+
+    <!-- Mensaje de error global -->
+    @if (errorMsg()) {
+      <div class="alert alert-error">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Campo Usuario -->
+      <div class="form-group">
+        <label for="usuario">Usuario</label>
+        <input
+          id="usuario"
+          type="text"
+          formControlName="usuario"
+          placeholder="Ingresa tu usuario"
+          [class.input-error]="usuarioCtrl.touched && usuarioCtrl.invalid"
+        />
+        @if (usuarioCtrl.touched && usuarioCtrl.errors) {
+          <div class="field-error">
+            @if (usuarioCtrl.errors['required']) {
+              <span>El usuario es obligatorio.</span>
+            }
+            @if (usuarioCtrl.errors['minlength']) {
+              <span>Mínimo 3 caracteres.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Campo Contraseña -->
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <input
+          id="contrasena"
+          type="password"
+          formControlName="contrasena"
+          placeholder="Ingresa tu contraseña"
+          [class.input-error]="contrasenaCtrl.touched && contrasenaCtrl.invalid"
+        />
+        @if (contrasenaCtrl.touched && contrasenaCtrl.errors) {
+          <div class="field-error">
+            @if (contrasenaCtrl.errors['required']) {
+              <span>La contraseña es obligatoria.</span>
+            }
+            @if (contrasenaCtrl.errors['minlength']) {
+              <span>Mínimo 6 caracteres.</span>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Botón de envío -->
+      <button
+        type="submit"
+        [disabled]="isLoading()"
+        class="btn-login"
+      >
+        @if (isLoading()) {
+          <span>Iniciando sesión...</span>
+        } @else {
+          <span>Iniciar Sesión</span>
+        }
+      </button>
+    </form>
+  </div>
+</div>

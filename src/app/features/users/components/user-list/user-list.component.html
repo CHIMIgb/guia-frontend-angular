@@ -1,0 +1,71 @@
+<!-- src/app/features/users/components/user-list/user-list.component.html -->
+<div class="user-list-container">
+  <div class="header">
+    <h2>Gestión de Usuarios</h2>
+    @if (isAdmin) {
+      <a routerLink="/users/new" class="btn-new">+ Nuevo Usuario</a>
+    }
+  </div>
+
+  <!-- Mensaje de error -->
+  @if (error()) {
+    <div class="alert alert-error">
+      {{ error() }}
+      <button (click)="loadUsers()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Indicador de carga -->
+  @if (isLoading()) {
+    <div class="loading">Cargando usuarios...</div>
+  }
+
+  <!-- Tabla de usuarios -->
+  @if (!isLoading() && users().length > 0) {
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Roles</th>
+          <th>Estado</th>
+          @if (isAdmin) {
+            <th>Acciones</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr [class.inactive]="!user.activo">
+            <td>{{ user.id }}</td>
+            <td>{{ user.usuario }}</td>
+            <td>{{ user.nombre }}</td>
+            <td>{{ user.apellidos }}</td>
+            <td>{{ user.roles.join(', ') }}</td>
+            <td>
+              <span [class]="user.activo ? 'badge-active' : 'badge-inactive'">
+                {{ user.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            @if (isAdmin) {
+              <td class="actions">
+                <a [routerLink]="['/users', user.id, 'edit']" class="btn-edit">Editar</a>
+                <button (click)="toggleStatus(user)" class="btn-status">
+                  {{ user.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+                <button (click)="deleteUser(user.id)" class="btn-delete">Eliminar</button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <!-- Sin resultados -->
+  @if (!isLoading() && users().length === 0 && !error()) {
+    <div class="empty">No se encontraron usuarios.</div>
+  }
+</div>
