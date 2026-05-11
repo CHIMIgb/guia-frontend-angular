@@ -1,0 +1,156 @@
+// ─── Layout with Sidebar — Light Theme (matching Login) ─────────
+$sidebar-width: 240px;
+$primary: #6366f1;
+$primary-hover: #4f46e5;
+$primary-light: rgba(99, 102, 241, 0.08);
+$primary-active-bg: rgba(99, 102, 241, 0.12);
+$bg-card: #ffffff;
+$bg-page: #f3f4f6;
+$text-dark: #111827;
+$text-muted: #6b7280;
+$border: #e5e7eb;
+$error-text: #dc2626;
+$error-hover-bg: rgba(220, 38, 38, 0.06);
+
+.layout {
+  display: flex;
+  min-height: 100dvh;
+}
+
+// ─── Sidebar ────────────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-width;
+  background: $bg-card;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid $border;
+
+  .logo-icon {
+    color: $primary;
+    flex-shrink: 0;
+  }
+
+  .app-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-dark;
+  }
+}
+
+// ─── Navigation ─────────────────────────────────────────────────
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  color: $text-muted;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.15s;
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.65;
+    transition: opacity 0.15s;
+  }
+
+  &:hover {
+    background: $primary-light;
+    color: $primary;
+
+    svg { opacity: 1; }
+  }
+
+  &.active {
+    background: $primary-active-bg;
+    color: $primary;
+    font-weight: 600;
+
+    svg { opacity: 1; }
+  }
+}
+
+// ─── Footer ─────────────────────────────────────────────────────
+.sidebar-footer {
+  padding: 0.75rem 0.5rem;
+  border-top: 1px solid $border;
+
+  .user-info {
+    padding: 0.5rem 0.85rem;
+    margin-bottom: 0.25rem;
+
+    .user-name {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $text-dark;
+    }
+
+    .user-role {
+      display: block;
+      font-size: 0.75rem;
+      color: $text-muted;
+      text-transform: capitalize;
+    }
+  }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    color: $error-text;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    svg {
+      flex-shrink: 0;
+      opacity: 0.75;
+      transition: opacity 0.15s;
+    }
+
+    &:hover {
+      background: $error-hover-bg;
+      svg { opacity: 1; }
+    }
+  }
+}
+
+// ─── Main Content ───────────────────────────────────────────────
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-width;
+  padding: 2rem;
+  min-height: 100dvh;
+  background: $bg-page;
+}

@@ -1,0 +1,32 @@
+<!-- src/app/shared/components/dashboard/dashboard.component.html -->
+<div class="dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>Dashboard</h1>
+      @if (user()) {
+        <span class="welcome">Bienvenido, <strong>{{ user()!.nombre }} {{ user()!.apellidos }}</strong></span>
+      }
+    </div>
+    <button class="btn-logout" (click)="logout()">
+      Cerrar Sesión
+    </button>
+  </header>
+
+  <!-- Cards -->
+  <div class="dashboard-grid">
+    <a routerLink="/users" class="card">
+      <div class="card-icon">👥</div>
+      <h3>Usuarios</h3>
+      <p>Gestionar usuarios del sistema</p>
+    </a>
+
+    @if (isAdmin) {
+      <a routerLink="/users/new" class="card">
+        <div class="card-icon">➕</div>
+        <h3>Nuevo Usuario</h3>
+        <p>Crear una nueva cuenta</p>
+      </a>
+    }
+  </div>
+</div>
