@@ -1,71 +1,117 @@
 <!-- src/app/features/users/components/user-list/user-list.component.html -->
-<div class="user-list-container">
-  <div class="header">
-    <h2>Gestión de Usuarios</h2>
+<div class="user-list-page">
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Usuarios</h1>
+      <p class="subtitle">Administra las cuentas del sistema</p>
+    </div>
     @if (isAdmin) {
-      <a routerLink="/users/new" class="btn-new">+ Nuevo Usuario</a>
+      <a routerLink="/users/new" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6Zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg>
+        Nuevo Usuario
+      </a>
     }
   </div>
 
   <!-- Mensaje de error -->
   @if (error()) {
     <div class="alert alert-error">
-      {{ error() }}
-      <button (click)="loadUsers()">Reintentar</button>
+      <span>{{ error() }}</span>
+      <button class="btn-retry" (click)="loadUsers()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Mensaje de éxito -->
+  @if (successMsg()) {
+    <div class="alert alert-success">
+      {{ successMsg() }}
     </div>
   }
 
   <!-- Indicador de carga -->
   @if (isLoading()) {
-    <div class="loading">Cargando usuarios...</div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando usuarios...</span>
+    </div>
   }
 
   <!-- Tabla de usuarios -->
   @if (!isLoading() && users().length > 0) {
-    <table class="user-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Usuario</th>
-          <th>Nombre</th>
-          <th>Apellidos</th>
-          <th>Roles</th>
-          <th>Estado</th>
-          @if (isAdmin) {
-            <th>Acciones</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of users(); track user.id) {
-          <tr [class.inactive]="!user.activo">
-            <td>{{ user.id }}</td>
-            <td>{{ user.usuario }}</td>
-            <td>{{ user.nombre }}</td>
-            <td>{{ user.apellidos }}</td>
-            <td>{{ user.roles.join(', ') }}</td>
-            <td>
-              <span [class]="user.activo ? 'badge-active' : 'badge-inactive'">
-                {{ user.activo ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Sexo</th>
+            <th>Roles</th>
+            <th>Estado</th>
             @if (isAdmin) {
-              <td class="actions">
-                <a [routerLink]="['/users', user.id, 'edit']" class="btn-edit">Editar</a>
-                <button (click)="toggleStatus(user)" class="btn-status">
-                  {{ user.activo ? 'Desactivar' : 'Activar' }}
-                </button>
-                <button (click)="deleteUser(user.id)" class="btn-delete">Eliminar</button>
-              </td>
+              <th class="th-actions">Acciones</th>
             }
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (user of users(); track user.id) {
+            <tr [class.row-inactive]="!user.activo">
+              <td class="cell-id">{{ user.id }}</td>
+              <td class="cell-user">{{ user.usuario }}</td>
+              <td>{{ user.nombre }}</td>
+              <td>{{ user.apellidos }}</td>
+              <td>{{ user.sexo === 'M' ? 'Masculino' : user.sexo === 'F' ? 'Femenino' : (user.sexo || '—') }}</td>
+              <td>
+                @for (role of user.roles; track role) {
+                  <span class="badge-role">{{ role }}</span>
+                }
+              </td>
+              <td>
+                <span [class]="user.activo ? 'badge badge-active' : 'badge badge-inactive'">
+                  {{ user.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              @if (isAdmin) {
+                <td class="cell-actions">
+                  <!-- Editar -->
+                  <a [routerLink]="['/users', user.id, 'edit']" class="btn-icon btn-edit" title="Editar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
+                  </a>
+                  <!-- Activar / Desactivar -->
+                  <button (click)="toggleStatus(user)" class="btn-icon" [class.btn-deactivate]="user.activo" [class.btn-activate]="!user.activo" [title]="user.activo ? 'Desactivar' : 'Activar'">
+                    @if (user.activo) {
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7ZM2 4.27l2.28 2.28.46.46A11.8 11.8 0 0 0 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27ZM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2Zm4.31-.78 3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01Z"/></svg>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5ZM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5Zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3Z"/></svg>
+                    }
+                  </button>
+                  <!-- Eliminar -->
+                  <button (click)="deleteUser(user)" class="btn-icon btn-delete" title="Eliminar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4Z"/></svg>
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <span class="record-count">{{ users().length }} usuario(s) encontrado(s)</span>
+    </div>
   }
 
   <!-- Sin resultados -->
   @if (!isLoading() && users().length === 0 && !error()) {
-    <div class="empty">No se encontraron usuarios.</div>
+    <div class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5C23 14.17 18.33 13 16 13Z"/></svg>
+      <h3>Sin usuarios</h3>
+      <p>No se encontraron usuarios registrados en el sistema.</p>
+      @if (isAdmin) {
+        <a routerLink="/users/new" class="btn-primary">Crear primer usuario</a>
+      }
+    </div>
   }
 </div>

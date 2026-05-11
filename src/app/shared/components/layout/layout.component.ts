@@ -14,7 +14,6 @@ export class LayoutComponent {
   private authService = inject(AuthService);
 
   readonly user = this.authService.currentUser;
-  readonly isAdmin = this.authService.currentUser()?.roles.includes('admin') ?? false;
 
   logout(): void {
     this.authService.logout();

@@ -12,8 +12,8 @@ export class UserService {
   private base = `${environment.apiUrl}/users`;
 
   /** GET /api/v1/users — Lista todos los usuarios activos */
-  getAll(): Observable<ApiResponse<User[]>> {
-    return this.http.get<ApiResponse<User[]>>(this.base);
+  getAll(): Observable<ApiResponse<{ items: User[] }>> {
+    return this.http.get<ApiResponse<{ items: User[] }>>(this.base);
   }
 
   /** GET /api/v1/users/{id} */

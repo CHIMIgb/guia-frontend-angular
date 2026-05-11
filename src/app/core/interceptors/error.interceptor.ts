@@ -7,8 +7,10 @@ import { AuthService } from '../../features/auth/services/auth.service';
 
 /**
  * Maneja errores HTTP:
+ *  - 0 (red)            → propaga error para que el componente lo muestre.
+ *  - /auth/ endpoints   → propaga error al componente (login, refresh).
  *  - 401 TOKEN_EXPIRED  → intenta refresh automático, reintenta la petición.
- *  - 401 TOKEN_REVOKED  → el token fue invalidado por logout; limpia sesión.
+ *  - 401 TOKEN_REVOKED  → limpia sesión directamente.
  *  - 401 otros          → limpia sesión y redirige a /auth/login.
  *  - 403                → redirige a /forbidden.
  *  - 500+               → propaga el error para que el componente lo maneje.
@@ -19,6 +21,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+
+      // Errores de red (sin conexión, CORS, backend caído) → propagar al componente
+      if (error.status === 0) {
+        return throwError(() => error);
+      }
+
+      // No interceptar peticiones de autenticación (login, refresh)
+      if (req.url.includes('/auth/')) {
+        return throwError(() => error);
+      }
 
       if (error.status === 401) {
         const apiCode = error.error?.error?.code as string | undefined;
@@ -46,7 +58,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         // Token revocado (logout en otro dispositivo, en lista negra)
-        // No intentar refresh; limpiar sesión directamente.
         if (apiCode === 'TOKEN_REVOKED') {
           authService.logout();
           return EMPTY;

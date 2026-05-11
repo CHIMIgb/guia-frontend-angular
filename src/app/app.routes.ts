@@ -1,8 +1,8 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { authGuard }   from './features/auth/guards/auth.guard';
+import { authGuard } from './features/auth/guards/auth.guard';
 import { publicGuard } from './features/auth/guards/public.guard';
-import { roleGuard }   from './features/users/guards/role.guard';
+import { roleGuard } from './features/users/guards/role.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
