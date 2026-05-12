@@ -1,59 +1,94 @@
-# FrontendApp
+# Guía Frontend Angular - Sistema de Gestión de Usuarios
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.10.
+Este proyecto es una aplicación frontend moderna desarrollada con **Angular 21**. Proporciona una interfaz robusta y escalable para la gestión de usuarios, implementando una arquitectura basada en componentes, reactividad con Signals, diseño modular con SCSS y consumo de una API RESTful.
 
-## Development server
+## 📋 Requisitos Previos
 
-To start a local development server, run:
+Antes de comenzar, asegúrate de tener instalado lo siguiente en tu sistema:
+
+*   **Node.js** (versión 18.x o superior recomendada). Puedes descargarlo desde [nodejs.org](https://nodejs.org/).
+*   **npm** (Node Package Manager), que generalmente viene incluido con Node.js.
+*   **Angular CLI** (opcional pero recomendado de forma global). Puedes instalarlo con el comando:
+    ```bash
+    npm install -g @angular/cli@21
+    ```
+
+## 🚀 Instalación
+
+Sigue estos pasos para instalar y configurar el proyecto localmente:
+
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone https://github.com/CHIMIgb/guia-frontend-angular.git
+    ```
+
+2.  **Navegar al directorio del proyecto:**
+    ```bash
+    cd guia-frontend-angular
+    ```
+
+3.  **Instalar las dependencias del proyecto:**
+    ```bash
+    npm install
+    ```
+
+## ⚙️ Configuración del Entorno
+
+La aplicación necesita comunicarse con un backend (API REST). Las URLs de la API están definidas en los archivos de entorno ubicados en `src/environments/`.
+
+*   **Entorno de Desarrollo (`src/environments/environment.development.ts`):**
+    Por defecto, la API local apunta a `http://localhost:8080/api/v1`.
+    ```typescript
+    export const environment = {
+      production: false,
+      apiUrl: 'http://localhost:8080/api/v1' // Asegúrate de que coincida con tu backend
+    };
+    ```
+*   **Entorno de Producción (`src/environments/environment.ts`):**
+    Aquí debes configurar la URL de tu API de producción antes de desplegar.
+
+Si tu backend está corriendo en un puerto diferente, ajusta la propiedad `apiUrl` según corresponda.
+
+## 💻 Ejecución en Modo Desarrollo
+
+Para iniciar el servidor de desarrollo local, ejecuta el siguiente comando:
 
 ```bash
-ng serve
+npm start
 ```
+*(O alternativamente: `ng serve` si tienes Angular CLI global)*
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Una vez que el servidor haya compilado la aplicación, abre tu navegador web y visita:
+**[http://localhost:4200/](http://localhost:4200/)**
 
-## Code scaffolding
+La aplicación se recargará automáticamente en el navegador cada vez que guardes cambios en los archivos fuente.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🛠️ Construcción para Producción (Build)
+
+Para compilar la aplicación para un entorno de producción, ejecuta:
 
 ```bash
-ng generate component component-name
+npm run build
 ```
+*(O alternativamente: `ng build`)*
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Este comando compilará la aplicación de forma optimizada y depositará los archivos estáticos resultantes en el directorio `dist/`. Estos archivos están listos para ser servidos por cualquier servidor web (como Nginx, Apache, o un servicio en la nube).
+
+## 🧪 Pruebas Unitarias
+
+Este proyecto está configurado para usar **Vitest** en lugar de Karma/Jasmine para mayor velocidad de ejecución.
+
+Para correr las pruebas unitarias, ejecuta:
 
 ```bash
-ng generate --help
+npm test
 ```
+*(O alternativamente: `ng test`)*
 
-## Building
+## 🏗️ Tecnologías Utilizadas
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+*   **Framework:** [Angular 21](https://angular.dev/)
+*   **Lenguaje principal:** [TypeScript](https://www.typescriptlang.org/)
+*   **Estilos:** [SCSS (Sass)](https://sass-lang.com/)
+*   **Manejo de estados y asincronía:** [RxJS](https://rxjs.dev/) y Angular Signals
+*   **Testing:** [Vitest](https://vitest.dev/)
