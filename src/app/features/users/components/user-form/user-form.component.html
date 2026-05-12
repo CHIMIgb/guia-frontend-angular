@@ -16,76 +16,78 @@
 
   @if (!isLoading()) {
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <!-- Campo Usuario -->
-      <div class="form-group">
-        <label for="usuario">Usuario</label>
-        <input
-          id="usuario"
-          type="text"
-          formControlName="usuario"
-          placeholder="Nombre de usuario"
-        />
-      </div>
-
-      <!-- Campo Contraseña (solo en creación, opcional en edición) -->
-      <div class="form-group">
-        <label for="contrasena">
-          Contraseña
-          @if (isEditing()) {
-            <small>(dejar vacío para no cambiar)</small>
-          }
-        </label>
-        <input
-          id="contrasena"
-          type="password"
-          formControlName="contrasena"
-          placeholder="Mínimo 6 caracteres"
-        />
-      </div>
-
-      <!-- Campo Nombre -->
-      <div class="form-group">
-        <label for="nombre">Nombre</label>
-        <input
-          id="nombre"
-          type="text"
-          formControlName="nombre"
-          placeholder="Nombre"
-        />
-      </div>
-
-      <!-- Campo Apellidos -->
-      <div class="form-group">
-        <label for="apellidos">Apellidos</label>
-        <input
-          id="apellidos"
-          type="text"
-          formControlName="apellidos"
-          placeholder="Apellidos"
-        />
-      </div>
-
-      <!-- Campo Sexo -->
-      <div class="form-group">
-        <label for="sexo">Sexo</label>
-        <select id="sexo" formControlName="sexo">
-          <option value="">— Seleccionar —</option>
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-        </select>
-      </div>
-
-      <!-- Campo Rol (solo en creación) -->
-      @if (!isEditing()) {
+      <div class="form-grid">
+        <!-- Campo Usuario -->
         <div class="form-group">
-          <label for="rol_id">Rol</label>
-          <select id="rol_id" formControlName="rol_id">
-            @for (rol of ROLES; track rol.id) {
-              <option [value]="rol.id">{{ rol.nombre }}</option>
+          <label for="usuario">Usuario</label>
+          <input
+            id="usuario"
+            type="text"
+            formControlName="usuario"
+            placeholder="Nombre de usuario"
+          />
+        </div>
+
+        <!-- Campo Contraseña (solo en creación, opcional en edición) -->
+        <div class="form-group">
+          <label for="contrasena">
+            Contraseña
+            @if (isEditing()) {
+              <small>(dejar vacío para no cambiar)</small>
             }
+          </label>
+          <input
+            id="contrasena"
+            type="password"
+            formControlName="contrasena"
+            placeholder="Mínimo 6 caracteres"
+          />
+        </div>
+
+        <!-- Campo Nombre -->
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            placeholder="Nombre"
+          />
+        </div>
+
+        <!-- Campo Apellidos -->
+        <div class="form-group">
+          <label for="apellidos">Apellidos</label>
+          <input
+            id="apellidos"
+            type="text"
+            formControlName="apellidos"
+            placeholder="Apellidos"
+          />
+        </div>
+
+        <!-- Campo Sexo -->
+        <div class="form-group" [class.span-2]="isEditing()">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" formControlName="sexo">
+            <option value="">— Seleccionar —</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
           </select>
         </div>
-      }
+
+        <!-- Campo Rol (solo en creación) -->
+        @if (!isEditing()) {
+          <div class="form-group">
+            <label for="rol_id">Rol</label>
+            <select id="rol_id" formControlName="rol_id">
+              @for (rol of ROLES; track rol.id) {
+                <option [value]="rol.id">{{ rol.nombre }}</option>
+              }
+            </select>
+          </div>
+        }
+      </div>
 
       <!-- Botones -->
       <div class="form-actions">
@@ -96,7 +98,7 @@
             <span>{{ isEditing() ? 'Actualizar' : 'Crear Usuario' }}</span>
           }
         </button>
-        <a routerLink="/users" class="btn-cancel">Cancelar</a>
+        <button type="button" class="btn-cancel" (click)="cancelled.emit()">Cancelar</button>
       </div>
     </form>
   }

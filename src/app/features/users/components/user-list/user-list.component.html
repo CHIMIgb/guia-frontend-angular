@@ -6,11 +6,19 @@
       <p class="subtitle">Administra las cuentas del sistema</p>
     </div>
     @if (isAdmin) {
-      <a routerLink="/users/new" class="btn-primary">
+      <button (click)="openModal()" class="btn-primary">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6Zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z"/></svg>
         Nuevo Usuario
-      </a>
+      </button>
     }
+  </div>
+
+  <!-- Barra de Filtros -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" placeholder="Buscar por usuario, nombre o apellidos..." (input)="onSearch($event)" />
+    </div>
   </div>
 
   <!-- Mensaje de error -->
@@ -37,7 +45,7 @@
   }
 
   <!-- Tabla de usuarios -->
-  @if (!isLoading() && users().length > 0) {
+  @if (!isLoading() && totalRecords() > 0) {
     <div class="table-container">
       <table class="data-table">
         <thead>
@@ -55,7 +63,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (user of users(); track user.id) {
+          @for (user of paginatedUsers(); track user.id) {
             <tr [class.row-inactive]="!user.activo">
               <td class="cell-id">{{ user.id }}</td>
               <td class="cell-user">{{ user.usuario }}</td>
@@ -75,9 +83,9 @@
               @if (isAdmin) {
                 <td class="cell-actions">
                   <!-- Editar -->
-                  <a [routerLink]="['/users', user.id, 'edit']" class="btn-icon btn-edit" title="Editar">
+                  <button (click)="openModal(user.id)" class="btn-icon btn-edit" title="Editar">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25ZM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z"/></svg>
-                  </a>
+                  </button>
                   <!-- Activar / Desactivar -->
                   <button (click)="toggleStatus(user)" class="btn-icon" [class.btn-deactivate]="user.activo" [class.btn-activate]="!user.activo" [title]="user.activo ? 'Desactivar' : 'Activar'">
                     @if (user.activo) {
@@ -85,10 +93,6 @@
                     } @else {
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5ZM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5Zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3Z"/></svg>
                     }
-                  </button>
-                  <!-- Eliminar -->
-                  <button (click)="deleteUser(user)" class="btn-icon btn-delete" title="Eliminar">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4Z"/></svg>
                   </button>
                 </td>
               }
@@ -99,19 +103,39 @@
     </div>
 
     <div class="table-footer">
-      <span class="record-count">{{ users().length }} usuario(s) encontrado(s)</span>
+      <div class="pagination-info">
+        Mostrando <strong>{{ showingFrom() }}</strong> a <strong>{{ showingTo() }}</strong> de <strong>{{ totalRecords() }}</strong> registros
+      </div>
+      <div class="pagination-controls">
+        <button (click)="prevPage()" [disabled]="currentPage() === 1" class="btn-page">Anterior</button>
+        <span class="page-current">Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage() === totalPages()" class="btn-page">Siguiente</button>
+      </div>
     </div>
   }
 
   <!-- Sin resultados -->
-  @if (!isLoading() && users().length === 0 && !error()) {
+  @if (!isLoading() && totalRecords() === 0 && !error()) {
     <div class="empty-state">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48" height="48"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3Zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3Zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13Zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5C23 14.17 18.33 13 16 13Z"/></svg>
-      <h3>Sin usuarios</h3>
-      <p>No se encontraron usuarios registrados en el sistema.</p>
-      @if (isAdmin) {
-        <a routerLink="/users/new" class="btn-primary">Crear primer usuario</a>
+      <h3>Sin resultados</h3>
+      <p>No se encontraron usuarios que coincidan con tu búsqueda.</p>
+      @if (isAdmin && allUsers().length === 0) {
+        <button (click)="openModal()" class="btn-primary">Crear primer usuario</button>
       }
+    </div>
+  }
+
+  <!-- Modal Wrapper -->
+  @if (isModalOpen()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <app-user-form 
+          [id]="selectedUserId()" 
+          (saved)="onModalSaved()" 
+          (cancelled)="closeModal()">
+        </app-user-form>
+      </div>
     </div>
   }
 </div>

@@ -44,22 +44,6 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/users/components/user-list/user-list.component')
                 .then(m => m.UserListComponent)
-          },
-          {
-            path: 'new',
-            canActivate: [roleGuard],
-            data: { roles: ['admin'] },
-            loadComponent: () =>
-              import('./features/users/components/user-form/user-form.component')
-                .then(m => m.UserFormComponent)
-          },
-          {
-            path: ':id/edit',
-            canActivate: [roleGuard],
-            data: { roles: ['admin', 'editor'] },
-            loadComponent: () =>
-              import('./features/users/components/user-form/user-form.component')
-                .then(m => m.UserFormComponent)
           }
         ]
       },

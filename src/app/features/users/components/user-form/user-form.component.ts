@@ -1,22 +1,23 @@
 // src/app/features/users/components/user-form/user-form.component.ts
-import { Component, inject, signal, Input, OnInit } from '@angular/core';
+import { Component, inject, signal, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './user-form.component.html',
+  styleUrl: './user-form.component.scss',
 })
 export class UserFormComponent implements OnInit {
   @Input() id?: string;
+  @Output() saved = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 
   private fb          = inject(FormBuilder);
   private userService = inject(UserService);
-  private router      = inject(Router);
 
   readonly isEditing = signal(false);
   readonly isLoading = signal(false);
@@ -90,7 +91,7 @@ export class UserFormComponent implements OnInit {
         });
 
     obs$.subscribe({
-      next: () => this.router.navigate(['/users']),
+      next: () => this.saved.emit(),
       error: (err) => {
         this.isSaving.set(false);
         this.errorMsg.set(err?.error?.error?.message ?? 'Error al guardar.');
